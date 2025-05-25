@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "677134519569",
+    "project_id": "golivechat-fabe2",
+    "storage_bucket": "golivechat-fabe2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:677134519569:android:2851c2855ef6537c4f10b0",
+        "android_client_info": {
+          "package_name": "com.golivechat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "677134519569-h5uq5vkql67kkfama2g2mil0cgverchp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.golivechat",
+            "certificate_hash": "943c26c523901bfb047be412f197ef9efd28f0ac"
+          }
+        },
+        {
+          "client_id": "677134519569-mk8s610ss1knpdslrd2u6ocb5fice09c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.golivechat",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "677134519569-lg85qidlpftetfkhefqcm8l8vh9umi3t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnvm517QG-7SB9bZaTLeIq3SXMfuji8tk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "677134519569-lg85qidlpftetfkhefqcm8l8vh9umi3t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
