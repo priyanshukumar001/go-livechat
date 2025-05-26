@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Share } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import ZegoUIKitPrebuiltVideoConference from '@zegocloud/zego-uikit-prebuilt-video-conference-rn';
@@ -9,6 +9,7 @@ import { api } from '../lib/api';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 type RootStackParamList = {
     Home: undefined;
@@ -85,9 +86,26 @@ const VideoConferencePage = () => {
         navigation.replace('Home');
     };
 
+    const handleShare = async () => {
+        try {
+            const shareMessage = `Join my conference on GoLiveChat! Conference ID: ${conferenceId}`;
+            await Share.share({
+                message: shareMessage,
+            });
+        } catch (error) {
+            console.error('Error sharing conference:', error);
+        }
+    };
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+                <TouchableOpacity
+                    style={[styles.shareButton, { backgroundColor: theme.colors.primary }]}
+                    onPress={handleShare}
+                >
+                    <Icon name="share-variant" size={24} color="white" />
+                </TouchableOpacity>
                 <ZegoUIKitPrebuiltVideoConference
                     appID={Number(KeyCenter.appId)}
                     appSign={KeyCenter.appSign}
@@ -135,34 +153,6 @@ const VideoConferencePage = () => {
                         showUserMuteOff: true,
                         showUserUnmuteOn: true,
                         showUserUnmuteOff: true,
-                        showUserCameraOnOn: true,
-                        showUserCameraOnOff: true,
-                        showUserCameraOffOn: true,
-                        showUserCameraOffOff: true,
-                        showUserScreenSharingOnOn: true,
-                        showUserScreenSharingOnOff: true,
-                        showUserScreenSharingOffOn: true,
-                        showUserScreenSharingOffOff: true,
-                        showUserChatOnOn: true,
-                        showUserChatOnOff: true,
-                        showUserChatOffOn: true,
-                        showUserChatOffOff: true,
-                        showUserLeaveOnOn: true,
-                        showUserLeaveOnOff: true,
-                        showUserLeaveOffOn: true,
-                        showUserLeaveOffOff: true,
-                        showUserKickOnOn: true,
-                        showUserKickOnOff: true,
-                        showUserKickOffOn: true,
-                        showUserKickOffOff: true,
-                        showUserMuteOnOn: true,
-                        showUserMuteOnOff: true,
-                        showUserMuteOffOn: true,
-                        showUserMuteOffOff: true,
-                        showUserUnmuteOnOn: true,
-                        showUserUnmuteOnOff: true,
-                        showUserUnmuteOffOn: true,
-                        showUserUnmuteOffOff: true,
                     }}
                 />
             </View>
@@ -173,6 +163,25 @@ const VideoConferencePage = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    shareButton: {
+        position: 'absolute',
+        top: '50%',
+        right: 16,
+        zIndex: 1000,
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
 });
 
