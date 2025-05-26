@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, Share, TouchableOpacity, useWindowDimensions, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, StyleSheet, Share, TouchableOpacity, useWindowDimensions, KeyboardAvoidingView, Platform, ScrollView, FlatList } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Button, Card, Input, Text, ListItem } from '@/components';
@@ -38,7 +38,10 @@ const HomePage = () => {
     const [contacts, setContacts] = useState<User[]>([]);
     const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
-    const [errorState, setErrorState] = useState('');
+    const [errorState, setErrorState] = useState({
+        username: '',
+        conference_id: '',
+    });
     const [showModal, setShowModal] = useState(false);
     const [name, setName] = useState('');
 
@@ -103,7 +106,7 @@ const HomePage = () => {
 
     const handleStartConference = async () => {
         if (!username.trim()) {
-            setErrorState('Please enter your username');
+            setErrorState({ ...errorState, username: 'Please enter your username' });
             return;
         }
 
@@ -133,7 +136,7 @@ const HomePage = () => {
                     });
                 } else {
                     console.error('No user data found in AsyncStorage');
-                    setErrorState('User data not found. Please try logging in again.');
+                    setErrorState({ ...errorState, username: 'User data not found. Please try logging in again.' });
                 }
             }
         } catch (error: any) {
@@ -141,7 +144,7 @@ const HomePage = () => {
             if (error.response) {
                 console.error('Server response:', error.response.data);
             }
-            setErrorState('Failed to start conference. Please try again.');
+            setErrorState({ ...errorState, conference_id: 'Failed to start conference. Please try again.' });
         } finally {
             setLoading(false);
         }
@@ -149,11 +152,11 @@ const HomePage = () => {
 
     const handleJoinConference = async () => {
         if (!username.trim()) {
-            setErrorState('Please enter your display name');
+            setErrorState({ ...errorState, username: 'Please enter your display name' });
             return;
         }
         if (!conferenceId.trim()) {
-            setErrorState('Please enter a conference ID');
+            setErrorState({ ...errorState, conference_id: 'Please enter a conference ID' });
             return;
         }
 
@@ -167,11 +170,11 @@ const HomePage = () => {
                     uuid: currentUser.uid,
                 });
             } else {
-                setErrorState('Please sign in to join a conference');
+                setErrorState({ ...errorState, conference_id: 'Please sign in to join a conference' });
             }
         } catch (error) {
             console.error('Error joining conference:', error);
-            setErrorState('Failed to join conference. Please try again.');
+            setErrorState({ ...errorState, conference_id: 'Failed to join conference. Please try again.' });
         } finally {
             setLoading(false);
         }
@@ -212,7 +215,7 @@ const HomePage = () => {
         />
     );
 
-    const renderHeader = () => (
+    const renderHeader = useMemo(() => (
         <>
             <View style={styles.headerContainer}>
                 <Icon name="video-plus" size={40} color={theme.colors.primary} style={styles.headerIcon} />
@@ -230,9 +233,9 @@ const HomePage = () => {
                     value={username}
                     onChangeText={(text) => {
                         setUsername(text);
-                        setErrorState('');
+                        setErrorState({ ...errorState, username: '' });
                     }}
-                    error={errorState && !username.trim() ? errorState : undefined}
+                    error={errorState.username}
                     style={[styles.input, { width: width * 0.7 }]}
                 />
             </View>
@@ -250,9 +253,9 @@ const HomePage = () => {
                         value={conferenceId}
                         onChangeText={(text) => {
                             setConferenceId(text);
-                            setErrorState('');
+                            setErrorState({ ...errorState, conference_id: '' });
                         }}
-                        error={errorState && !conferenceId.trim() ? errorState : undefined}
+                        error={errorState.conference_id}
                         style={[styles.input, { width: width * 0.7 }]}
                     />
                 </View>
@@ -279,7 +282,7 @@ const HomePage = () => {
                 </View>
             </View>
         </>
-    );
+    ), [username, conferenceId, width, theme, errorState, loading, handleJoinConference, handleStartConference]);
 
     const renderFooter = () => (
         <Button
@@ -299,6 +302,7 @@ const HomePage = () => {
         >
             <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
                 <Card variant="elevated" style={styles.card}>
+                    {/* {renderHeader()} */}
                     <FlatList
                         data={users}
                         renderItem={renderUserItem}
@@ -368,7 +372,7 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
-        flexGrow: 1,
+        justifyContent: 'center',
         borderColor: '#ababab',
         borderWidth: 2,
         minHeight: 40,

@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import RootNavigator from './src/navigators/RootNavigator'
 import { ThemeProvider } from './src/theme/ThemeContext'
 import { enableScreens } from 'react-native-screens'
-import { initializeNotificationService } from './src/services/NotificationService';
+import { initializeNotificationService, checkNotificationPermission } from './src/services/NotificationService';
 import { AndroidImportance } from '@notifee/react-native'
 import messaging from '@react-native-firebase/messaging';
 import notifee from '@notifee/react-native';
 import { Alert, Linking } from 'react-native';
+import NotificationPrompt from './src/components/NotificationPrompt';
 
 enableScreens();
 
@@ -39,11 +40,13 @@ const linking = {
 };
 
 const App = () => {
+  const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
 
   useEffect(() => {
     const initializeApp = async () => {
       // Initialize notification service
       initializeNotificationService();
+      checkInitialNotificationPermission();
     }
 
     initializeApp();
@@ -51,7 +54,7 @@ const App = () => {
     // Handle foreground messages
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       console.log('Received foreground message:', remoteMessage);
-      Alert.alert('Notification', remoteMessage.notification?.body || '');
+      // Alert.alert('Notification', remoteMessage.notification?.body || '');
 
       const title = remoteMessage.notification?.title || 'New Message';
       const body = remoteMessage.notification?.body || '';
@@ -80,15 +83,43 @@ const App = () => {
       }
     });
 
-    // Cleanup listener on unmount
+    // Handle notification when app is in background and user taps on it
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      if (remoteMessage.data?.conferenceId) {
+        // Navigate to the conference
+        Linking.openURL(`golivechat://conference/${remoteMessage.data.conferenceId}/${remoteMessage.data.name}/${remoteMessage.data.uuid}`);
+      }
+    });
+
+    // Handle notification when app is closed and user taps on it
+    messaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        if (remoteMessage?.data?.conferenceId) {
+          // Navigate to the conference
+          Linking.openURL(`golivechat://conference/${remoteMessage.data.conferenceId}/${remoteMessage.data.name}/${remoteMessage.data.uuid}`);
+        }
+      });
+
     return unsubscribe;
   }, []);
+
+  const checkInitialNotificationPermission = async () => {
+    const hasPermission = await checkNotificationPermission();
+    if (!hasPermission) {
+      setShowNotificationPrompt(true);
+    }
+  };
 
   return (
     <SafeAreaProvider>
       <ThemeProvider>
         <NavigationContainer linking={linking}>
           <RootNavigator />
+          <NotificationPrompt
+            visible={showNotificationPrompt}
+            onClose={() => setShowNotificationPrompt(false)}
+          />
         </NavigationContainer>
       </ThemeProvider>
     </SafeAreaProvider>
