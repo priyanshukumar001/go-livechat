@@ -1,12 +1,11 @@
 import { DefaultTheme } from '@react-navigation/native';
-import { TextStyle } from 'react-native';
 
 // type TypographyStyle = Pick<TextStyle, 'fontSize' | 'fontWeight'>;
 type TypographyStyle = {
     fontSize: number;
     fontWeight: 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
   };
-  
+
 
 interface Typography {
   h1: TypographyStyle;
@@ -30,6 +29,7 @@ export const lightTheme = {
     success: '#34C759',
     warning: '#FF9500',
     error: '#FF3B30',
+    surface: '#FFFFFF',
     gray: {
       100: '#F2F2F7',
       200: '#E5E5EA',
@@ -95,6 +95,7 @@ export const darkTheme = {
     success: '#32D74B',
     warning: '#FF9F0A',
     error: '#FF453A',
+    surface: '#1C1C1E',
     gray: {
       100: '#1C1C1E',
       200: '#2C2C2E',
@@ -112,4 +113,4 @@ export const darkTheme = {
   typography: lightTheme.typography,
 };
 
-export type Theme = typeof lightTheme; 
+export type Theme = typeof lightTheme;

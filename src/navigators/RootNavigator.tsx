@@ -3,11 +3,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { TouchableOpacity, StyleSheet } from 'react-native';
-import HomePage from '../screens/HomePage';
+import HomePage from '@/screens/HomePage';
 import VideoConference from '@/screens/VideoConference';
-import { SignInScreen } from '../screens/auth/SignInScreen';
-import { SignUpScreen } from '../screens/auth/SignUpScreen';
-import { useTheme } from '../theme/ThemeContext';
+import SignInScreen from '@/screens/auth/SignInScreen';
+import SignUpScreen from '@/screens/auth/SignUpScreen';
+import { useTheme } from '@/theme/ThemeContext';
 
 export type RootStackParamList = {
     SignIn: undefined;
@@ -95,7 +95,7 @@ const RootNavigator = () => {
                 // App screens
                 <>
                     <Stack.Screen name="Home" component={HomePage} />
-                    <Stack.Screen name="VideoConference" component={VideoConference} />
+                    <Stack.Screen options={{ headerShown: false }} name="VideoConference" component={VideoConference} />
                 </>
             )}
         </Stack.Navigator>
